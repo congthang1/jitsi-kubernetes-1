@@ -68,6 +68,10 @@ sed -i 's/minikube.devopsk8s.cf/<your-domainname>/g' configMap.yaml
 
 Important Note: You have to allow jvb service ports to public to make calls with more than 2 participants. 
 
+kubectl apply -f configMap.yaml
+kubectl apply -f finalizeConfig.yaml
+
+
     • Installing jitsi web service & deployment 
 	kubectl apply -f web-service.yaml
 	kubectl apply -f web-deployment.yaml
