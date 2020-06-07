@@ -1,0 +1,63 @@
+#apiVersion: extensions/v1beta1
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: jibri
+  name: jibri
+  namespace: minikube
+spec:
+  selector:      
+    matchLabels:
+      service: jibri
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        service: jibri
+    spec:
+      containers:
+      - envFrom:
+          - configMapRef:
+              name: jitsi-env
+        image: jitsi/jibri
+        name: jibri
+        volumeMounts:
+        - mountPath: /dev/shm
+          name: dev-shm
+        - mountPath: /dev/snd
+          name: dev-snd
+        - name: finalize-sh
+          mountPath: /config/finalize.sh
+          subPath: finalize.sh
+        resources:
+          requests:
+            memory: "700Mi"
+            cpu: "700m"
+          limits:
+            memory: "1200Mi"
+            cpu: "1000m"                
+        securityContext:
+            privileged: true
+            capabilities:
+              add:
+                - NET_BIND_SERVICE
+                - SYS_ADMIN
+      volumes:      
+        - name: dev-snd
+          hostPath:
+            path: /dev/snd
+        - name: finalize-sh
+          configMap:
+            name: finalize-sh
+            defaultMode: 077
+        - name: dev-shm
+          hostPath:
+            path: /dev/shm            
+      restartPolicy: Always
+status: {}

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+#apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    service: prosody
+  namespace: minikube
+  name: prosody
+spec:
+  selector:
+    matchLabels:
+      service: prosody        
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25% 
+  template:
+    metadata:
+      labels:
+        service: prosody
+    spec:
+      containers:
+      - envFrom:
+          - configMapRef:
+              name: jitsi-env              
+        image: jitsi/prosody
+        name: prosody
+        ports:
+        - containerPort: 5222
+        - containerPort: 5280
+        - containerPort: 5347
+        - containerPort: 5269
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "50m"
+          limits:
+            memory: "300Mi"
+            cpu: "100m"                
+      restartPolicy: Always
+status: {}

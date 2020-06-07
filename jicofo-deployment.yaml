@@ -1,0 +1,38 @@
+#apiVersion: extensions/v1beta1
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: jicofo
+  name: jicofo
+  namespace: minikube
+spec:
+  selector:
+    matchLabels:
+      service: jicofo        
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25% 
+  template:
+    metadata:
+      labels:
+        service: jicofo
+    spec:
+      containers:
+      - envFrom:
+          - configMapRef:
+              name: jitsi-env
+        image: jitsi/jicofo
+        name: jicofo
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "50m"
+          limits:
+            memory: "300Mi"
+            cpu: "100m"                
+      restartPolicy: Always
+status: {}

@@ -1,0 +1,41 @@
+#apiVersion: extensions/v1beta1
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: jvb
+  name: jvb
+  namespace: minikube
+spec:
+  selector:
+    matchLabels:
+      service: jvb
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%    
+  template:
+    metadata:
+      labels:
+        service: jvb
+    spec:
+      containers:
+      - envFrom:
+          - configMapRef:
+              name: jitsi-env
+        image: jitsi/jvb
+        name: jvb
+        ports:
+        - containerPort: 32220
+          protocol: UDP
+        - containerPort: 31110
+        resources:
+          requests:
+            memory: "300Mi"
+            cpu: "100m"
+          limits:
+            memory: "500Mi"
+            cpu: "200m"                
+      restartPolicy: Always
