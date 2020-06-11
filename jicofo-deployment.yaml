@@ -5,7 +5,7 @@ metadata:
   labels:
     service: jicofo
   name: jicofo
-  namespace: minikube
+  namespace: jitsi
 spec:
   selector:
     matchLabels:
@@ -32,7 +32,7 @@ spec:
             memory: "200Mi"
             cpu: "50m"
           limits:
-            memory: "300Mi"
+            memory: "400Mi"
             cpu: "100m"                
       restartPolicy: Always
 status: {}

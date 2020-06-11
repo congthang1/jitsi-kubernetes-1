@@ -1,0 +1,57 @@
+INSTALLING JITSI-MEET ON UBUNTU 18.04
+
+Jitsi Meet Overview
+Jitsi Meet is an open-source video conferencing solution, providing virtual meeting rooms for remote team meetings. The sofware provides high video and audio quality and supports fully encrypted connections using TLS/SSL and Let’s Encrypt certificates.
+The tool provides features similary to commercial solutions, including:
+    • Sharing of desktops, presentations, and more
+    • Inviting users to a conference via a simple, custom URL
+    • Trading messages and emojis while video conferencing, with integrated chat.
+Requirements
+    • You have a Virtual Instance runnning Ubuntu Bionic Beaver (18.04 LTS)
+    • You have a domain or subdomain pointed to your Compute Instance
+
+STEP-1:  Configure a the hostname of the server corresponding to your domain / subdomain name:
+sudo su
+hostnamectl set-hostname omniwyse-jitsi
+#sed -i 's/^127.0.1.1.*$/127.0.1.1 omniwyse-jitsi.devopsk8s.cf omniwyse-jitsi/g' /etc/hosts
+echo "127.0.0.1 omniwyse-jitsi.devopsk8s.cf omniwyse-jitsi" >> /etc/hosts
+
+STEP-2: Install a Nginx server before installing Jitsi Meet. The Nginx server will serve as a reverse proxy for the Jitsi web interface. The Jitsi installation tool will take care of the configuration of Nginx.
+
+apt update
+apt install -y nginx
+systemctl enable nginx.service
+systemctl start nginx.service
+
+STEP-3: Download the APT key and setup the repositories of Jitsi, to install the software via apt:
+
+wget -qO - https://download.jitsi.org/jitsi-key.gpg.key | apt-key add -
+sh -c "echo 'deb https://download.jitsi.org stable/' > /etc/apt/sources.list.d/jitsi-stable.list"
+apt update -y
+
+STEP-4: Launch the installation of Jitsi Meet:
+
+apt install -y jitsi-meet
+
+
+During the installation you will be prompted to:
+    • Enter the FQDN of your instance. For example jitsi.mydomain.tld and press Enter:
+
+
+Choose the SSL certificate option Generate a new self-signed certificate (You will later get a chance to obtain a Let's Encrypt certificate) and press Enter.
+
+STEP-5: Run the script /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh to obtain a Let’s Encrypt SSL certificate for your instance:
+/usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
+
+During certificate request, you are being asked to enter your e-mail address to receive notifications regarding your certificate.
+
+STEP-6: Your private Jitsi Meet instance is ready for a first conference call. Open a Web-browser and type the FQDN of your instance, for example: https://jitsi.mydomain.tld.
+
+
+
+
+Enter a name for your conference and press Go to enter the conference room. It is now possible to share the link, to set a password, configure the audio and video quality and more for the conference.
+
+Important: Jitsi requires access to your camera and microphone. Authorize the use of these devices on your computer when prompted to do so by your web browser.
+
+Reference: https://www.scaleway.com/en/docs/installing-jitsi-meet-videoconferencing-ubuntu-bionic/

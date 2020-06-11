@@ -5,7 +5,7 @@ metadata:
   labels:
     service: jibri
   name: jibri
-  namespace: minikube
+  namespace: jitsi
 spec:
   selector:      
     matchLabels:
@@ -21,6 +21,7 @@ spec:
       labels:
         service: jibri
     spec:
+      nodeName: gke-cluster-1-pool-1-157c1726-965w
       containers:
       - envFrom:
           - configMapRef:
@@ -37,11 +38,11 @@ spec:
           subPath: finalize.sh
         resources:
           requests:
-            memory: "700Mi"
-            cpu: "700m"
-          limits:
-            memory: "1200Mi"
-            cpu: "1000m"                
+            memory: '2G'
+            cpu: '1'
+          limits: 
+            memory: '4G'
+            cpu: '3'         
         securityContext:
             privileged: true
             capabilities:

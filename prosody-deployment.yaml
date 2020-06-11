@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   labels:
     service: prosody
-  namespace: minikube
+  namespace: jitsi
   name: prosody
 spec:
   selector:

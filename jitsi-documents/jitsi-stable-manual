@@ -1,0 +1,41 @@
+1 sudo su
+
+2 source /usr/share/bash-completion/bash_completion
+
+3 hostnamectl set-hostname omniwyse.devopsk8s.cf
+
+4 echo "127.0.0.1 omniwyse.devopsk8s.cf" >> /etc/hosts
+
+Installing stable jitsi
+
+5 wget -qO - https://download.jitsi.org/jitsi-key.gpg.key | sudo apt-key add -
+
+6 sh -c "echo 'deb https://download.jitsi.org stable/' > /etc/apt/sources.list.d/jitsi-stable.list"
+
+7 apt -y update
+
+8 apt -y install jitsi-meet
+
+9 vim /etc/jitsi/meet/omniwyse.devopsk8s.cf-config.js
+
+Change:
+// requireDisplayName: true,
+to
+requireDisplayName: true,
+------------------
+
+
+10 vim /etc/jitsi/jicofo/sip-communicator.properties
+
+add:
+org.jitsi.jicofo.auth.URL=XMPP:omniwyse.devopsk8s.cf
+
+
+11 service prosody restart && service jicofo restart
+
+
+Let’s encrypt certificate
+
+12 /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
+
+Note: no need to install nginx jitsi automatically install nginx

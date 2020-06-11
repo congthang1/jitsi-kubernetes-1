@@ -1,0 +1,67 @@
+Install kubectl
+
+curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+
+OR
+curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.0/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
+
+kubectl version --client
+
+1. Install kops
+curl -LO https://github.com/kubernetes/kops/releases/download/$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '"' -f 4)/kops-linux-amd64
+
+$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '"' -f 4)
+
+curl -LO  https://github.com/kubernetes/kops/releases/download/1.15.0/kops-linux-amd64
+
+chmod +x kops-linux-amd64
+sudo mv kops-linux-amd64 /usr/local/bin/kops
+kops version
+2. Create a route53 domain for your cluster
+3. Create an S3 bucket to store your clusters state
+aws s3 mb s3://kops.devopsk8s.cf
+
+4. Build your cluster configuration
+kops create cluster --name kops.devopsk8s.cf --state s3://kops.devopsk8s.cf --ssh-public-key ~/.ssh/id_rsa.pub --image ami-04c1bb0abb34a90ea --master-size t2.medium --node-size t2.medium --master-count 1 --node-count 2 --node-volume-size 20 --master-volume-size 20 --zones ap-south-1a 
+5.Create the cluster in AWS
+kops update cluster kops.devopsk8s.cf –state=s3://kops.devopsk8s.cf --yes
+kops validate cluster 
+Suggestions:
+ * validate cluster: kops validate cluster
+ * list nodes: kubectl get nodes --show-labels
+ * ssh to the master: ssh -i ~/.ssh/id_rsa admin@api.kops.devopsk8s.cf
+ * the admin user is specific to Debian. If not using Debian please use the appropriate user based on your OS.
+* read about installing addons at: https://github.com/kubernetes/kops/blob/master/docs/addons.md.
+
+To connect to kops cluster nodes
+ssh -i /root/.ssh/id_rsa ubuntu@ec2-13-232-17-48.ap-south-1.compute.amazonaws.com
+export KOPS_STATE_STORE=s3://kops.devopsk8s.cf
+kops create cluster \
+--cloud aws \
+--name kops.devopsk8s.cf \
+--state s3://kops.devopsk8s.cf \
+--ssh-public-key /root/.ssh/id_rsa.pub \
+--image ami-04c1bb0abb34a90ea \
+--master-size t2.medium \
+--node-size t2.medium \
+--master-count 1 \
+--node-count 2 \
+--node-volume-size 20 \
+--master-volume-size 20 \
+--vpc=vpc-69322701 \
+--master-zones ap-south-1a \
+--zones ap-south-1a,ap-south-1b \
+--subnets subnet-0e390b66,subnet-0adfbf46 \
+--topology private \
+--networking weave 
+--lifecycle-overrides-InternetGateway=ignore
+
+echo "nameserver 8.8.8.8" | tee /etc/resolv.conf > /dev/null
+
+
+
+
+
+
