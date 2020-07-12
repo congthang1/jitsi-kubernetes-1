@@ -1,0 +1,99 @@
+Apache-SSL
+
+sudo apt-get update 
+sudo apt-get install apache2 -y
+
+sudo vi /etc/apache2/sites-available/000-default.conf
+...
+<Directory /var/www/html>
+Options Indexes FollowSymLinks Multiviews
+AllowOverride All
+Require all granted
+ </Directory>
+
+ServerName domain.com
+ServerAlias www.domain.com
+
+========================
+
+
+sudo a2enmod ssl
+sudo vi /etc/apache2/sites-enabled/sns.conf
+
+<VirtualHost *:80>
+ServerName domain.com
+ServerAlias www.domain.com
+ServerAdmin user@boo2.com.bd
+DocumentRoot /var/www/html
+</VirtualHost>
+
+sudo systemctl restart apache2
+vi /var/www/html/index.html
+###write anything###
+sudo wget https://dl.eff.org/certbot-auto
+sudo chmod a+x certbot-auto
+sudo ~/certbot-auto --debug --apache certonly -d domain.com
+For wildcard certificate
+~/certbot-auto certonly --manual --preferred-challenges=dns --email yourgmail.com --server https://acme-v02.api.letsencrypt.org/directory --agree-tos -d *.wysemeet.cf
+Enter Y
+Enter mailID *.gmail.com (any emailID)
+Enter A 
+Enter Y
+
+sudo vi /etc/apache2/sites-enabled/sns.conf
+
+<VirtualHost *:80>
+ServerName domain.com
+ServerAlias www.domain.com
+ServerAdmin user@boo2.com.bd
+DocumentRoot /var/www/html
+</VirtualHost>
+<VirtualHost *:443>
+  ServerName domain.com
+  DocumentRoot /var/www/html
+  ServerAdmin ubuntu@domain.com
+  SSLCertificateFile /etc/letsencrypt/live/domain.com/fullchain.pem
+  SSLCertificateKeyFile /etc/letsencrypt/live/domain.com/privkey.pem
+  SSLCertificateChainFile /etc/letsencrypt/live/domain.com/fullchain.pem
+
+  <Directory /var/www/html>
+    AllowOverride All
+  </Directory>
+</VirtualHost>
+
+sudo systemctl restart apache2
+
+Prerequisites:
+Domain name 
+ex: domain.com  (freenorm,godaddy)
+
+Output:
+https://domain.com
+http://domain.com
+
+Both are workin not yet redirected from 80 to 443
+
+To redirect from 80 to 443 http to https
+vi etc/apache2/sites-available/000-default.conf
+...
+Redirect permanent "/" "https://domain.com"
+...
+
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+sudo a2enmod proxy_ajp
+sudo a2enmod rewrite
+sudo a2enmod deflate
+sudo a2enmod headers
+sudo a2enmod proxy_balancer
+sudo a2enmod proxy_connect
+sudo a2enmod proxy_html
+sudo a2ensite 000-default.conf
+sudo systemctl restart apache2
+
+To renew ssl certificate 
+sudo ~/certbot-auto renew
+If u are getting any errors while renewing certificate
+https://waglerocks.com/issues-and-fixes/solved-attempting-to-renew-cert-produced-an-unexpected-error-problem-binding-to-port-80-could-not-bind-to-ipv4-or-ipv6/
+https://www.youtube.com/watch?v=koDhIrfx4H0
+https://webnlinux.com/install-letsencrypt-ssl-cert-on-aws-ec2-ubuntu-instance/

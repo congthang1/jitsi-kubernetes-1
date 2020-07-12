@@ -1,0 +1,59 @@
+HA-PROXY LOADBALANCER FOR JITSI-MEET
+
+To run jitsimeet web only on port 443 [NGINX]
+sudo bash
+rm -rf /etc/nginx/modules-enabled/60-jitsi-meet.conf
+sed -i 's/4444/443/g' /etc/nginx/sites-available/jitsione.domain.com.conf
+systemctl restart nginx.service
+
+To receive requests from different domain names to PROSODY
+vim /etc/prosody/conf.d/jitsione.domain.com.cfg.lua
+----
+cross_domain_bosh = false;
+----
+change false to true
+
+It should look like
+cross_domain_bosh = true;
+---
+systemctl restart prosody.service
+
+************* Install haproxy loadbalancer in separate loadbalancer **************
+
+sudo add-apt-repository ppa:vbernat/haproxy-2.0
+sudo apt-get update
+sudo apt-get install haproxy
+
+Note: I have created lets encrypt certificates
+Here Iam using lets encrypt wildcard certificate for haproxy server and all jitsimeet servers.
+
+sudo mkdir /etc/ssl/domain.com
+sudo cat /etc/letsencrypt/live/domain.com/fullchain.pem /etc/letsencrypt/live/domain.com/privkey.pem | sudo tee /etc/ssl/domain.com/domain.com.pem
+
+sudo vim /etc/haproxy/haproxy.cfg
+---------------------------
+global
+     tune.ssl.default-dh-param 1024
+
+#add below lines to end of this file
+
+frontend haproxynode
+    bind *:80
+    bind *:443 ssl crt /etc/ssl/domain.com/domain.com.pem
+    http-request redirect scheme https unless { ssl_fc }
+    option forwardfor
+    default_backend backendnodes
+
+backend backendnodes
+    balance url_param room
+    hash-type consistent
+    http-request set-header X-Forwarded-Port %[dst_port]
+    http-request add-header X-Forwarded-Proto https if { ssl_fc }
+    option httpchk HEAD / HTTP/1.1\r\nHost:localhost
+    server node1 jitsione.domain.com:443 check ssl verify none
+    server node2 jitsitwo.domain.com:443 check ssl verify none
+
+-------------------------- 
+
+sudo haproxy -c -f /etc/haproxy/haproxy.cfg
+sudo systemctl restart haproxy.service
