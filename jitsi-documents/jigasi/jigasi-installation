@@ -1,6 +1,6 @@
-hostnamectl set-hostname jitsi.wysemeet.cf
+hostnamectl set-hostname jitsi.domain.cf
 
-echo "127.0.0.1 jitsi.wysemeet.cf" >> /etc/hosts
+echo "127.0.0.1 jitsi.domain.cf" >> /etc/hosts
 
 wget -qO - https://download.jitsi.org/jitsi-key.gpg.key | sudo apt-key add -
 
@@ -14,12 +14,12 @@ apt -y install jitsi-meet
 
 apt-get install -y jigasi=1.1-38-g8f3c241-1 
 
-prosodyctl register jigasi auth.jitsi.wysemeet.cf password
+prosodyctl register jigasi auth.jitsi.domain.cf password
 
-vim /etc/jitsi/meet/jitsione.wysemeet.cf-config.js 
+vim /etc/jitsi/meet/jitsione.domain.cf-config.js 
 ---
     // liveStreamingEnabled: false,
-    hiddenDomain: 'auth.jitsione.wysemeet.cf',
+    hiddenDomain: 'auth.jitsione.domain.cf',
     // Transcription (in interface_config,
     // subtitles and buttons can be configured)
     // transcribingEnabled: false,
@@ -36,15 +36,15 @@ TOOLBAR_BUTTONS: [
 vim /etc/jitsi/jicofo/sip-communicator.properties
 -------should look exactly like below
 
-org.jitsi.jicofo.BRIDGE_MUC=JvbBrewery@internal.auth.jitsione.wysemeet.cf
-org.jitsi.jicofo.auth.URL=XMPP:jitsione.wysemeet.cf
+org.jitsi.jicofo.BRIDGE_MUC=JvbBrewery@internal.auth.jitsione.domain.cf
+org.jitsi.jicofo.auth.URL=XMPP:jitsione.domain.cf
 
 org.jitsi.jicofo.ALWAYS_TRUST_MODE_ENABLED=true
 
-org.jitsi.jicofo.jibri.BREWERY=jibribrewery@internal.auth.docker.wysemeet.cf
+org.jitsi.jicofo.jibri.BREWERY=jibribrewery@internal.auth.docker.domain.cf
 org.jitsi.jicofo.jibri.PENDING_TIMEOUT=90
 
-org.jitsi.jicofo.jigasi.BREWERY=JigasiBrewery@internal.auth.jitsione.wysemeet.cf
+org.jitsi.jicofo.jigasi.BREWERY=JigasiBrewery@internal.auth.jitsione.domain.cf
 -----------------
 
 vim /etc/jitsi/jigasi/config
