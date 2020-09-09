@@ -1,3 +1,5 @@
+Create a role having route53 access and attach that role to ami-ec2 instance
+
 connect to instance which you want create an ami
 
 Install node:
