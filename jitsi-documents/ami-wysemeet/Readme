@@ -1,0 +1,55 @@
+connect to instance which you want create an ami
+
+Install node:
+-------------
+sudo bash
+curl -sL https://deb.nodesource.com/setup_14.x -o nodesource_setup.sh
+bash nodesource_setup.sh
+apt install nodejs -y
+apt install build-essential -y
+
+Clone wysemeet code:
+--------------------
+git clone https://github.com/githubuser/wyse-meet.git
+cd wyse-meet
+
+sudo npm install
+
+hardcode wyseMeetDomain to hostname:
+------------------------------------
+It should look like below
+
+        "wyseMeetDomain": "https://hostname"
+
+---------------------------------------------------------------------
+To run script at system startup:
+========================================
+
+cp wysemeet-startup.sh /usr/local/sbin/
+
+vim /usr/local/sbin/wysemeet-startup.sh
+------------------
+#!/bin/bash
+script
+---------------------------
+
+chmod +x /usr/local/sbin/wysemeet-startup.sh
+
+vim /etc/systemd/system/wysemeet-startup.service
+----------------
+[Unit]
+Description=Wysemeet startup
+
+[Service]
+ExecStart=/usr/local/sbin/wysemeet-startup.sh
+
+[Install]
+WantedBy=multi-user.target
+----------------------
+
+systemctl enable wysemeet-startup.service
+
+#start not required
+#systemctl start wysemeet-startup.service
+
+whenever we go for another aws account change Email-id & Route53-hostedzone-id

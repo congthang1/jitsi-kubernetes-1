@@ -1,0 +1,85 @@
+INSTALL JITSI-MEET
+
+Setup hostname:
+
+# sudo bash
+
+# hostnamectl set-hostname omniwyse.devopsk8s.cf
+
+# echo "127.0.0.1 omniwyse.devopsk8s.cf" >> /etc/hosts
+
+
+Download the APT key and setup the repositories of Jitsi, to install the software via apt:
+
+# wget -qO - https://download.jitsi.org/jitsi-key.gpg.key | sudo apt-key add -
+
+# sh -c "echo 'deb https://download.jitsi.org stable/' > /etc/apt/sources.list.d/jitsi-stable.list"
+
+# apt -y update
+
+# apt -y install jitsi-meet
+
+# vim /etc/jitsi/meet/omniwyse.devopsk8s.cf-config.js
+
+Change:
+// requireDisplayName: true,
+to
+requireDisplayName: true,
+------------------
+
+
+# vim /etc/jitsi/jicofo/sip-communicator.properties
+
+add:
+org.jitsi.jicofo.auth.URL=XMPP:omniwyse.devopsk8s.cf
+----------------------
+
+# service prosody restart && service jicofo restart
+
+
+Configuring Let’s encrypt certificate
+
+# /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
+
+
+
+
+
+
+
+
+Wyse-meet deployment:
+
+Install node.js
+# cd ~
+
+# curl -sL https://deb.nodesource.com/setup_14.x -o nodesource_setup.sh
+
+# sudo bash nodesource_setup.sh
+
+# sudo apt install nodejs
+
+# sudo apt install build-essential
+
+# node -v
+v14.10.0
+
+# npm -v
+6.14.8
+
+Clone sourcecode
+# git clone https://github.com/githubuser/wyse-meet.git
+
+
+Build wyse-meet
+# cd wyse-meet/
+
+# npm install
+
+# make
+
+Configure nginx to use wyse-meet from custom source code
+# sed -i 's+/usr/share/jitsi-meet+/home/ubuntu/wyse-meet+g' /etc/nginx/sites-available/omniwyse.devopsk8s.cf.conf
+
+Restart nginx service
+# systemctl restart nginx

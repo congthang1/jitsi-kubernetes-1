@@ -22,7 +22,7 @@ apt-get install awscli -y
 sed -i "s/dnsrecord/$HOSTNAME/g" /home/ubuntu/route53-record.json
 sed -i "s/public-ip/$(curl http://checkip.amazonaws.com)/g" /home/ubuntu/route53-record.json
 
-aws route53 change-resource-record-sets --hosted-zone-id Z016456523EJLDTKQHOK5 --change-batch file://route53-record.json
+aws route53 change-resource-record-sets --hosted-zone-id Z016456523EJLDTKQHOK5 --change-batch file:///home/ubuntu/route53-record.json
 
 # install Java
 apt install -y openjdk-8-jre-headless
@@ -51,4 +51,13 @@ cat /etc/hosts >> /debug.txt
 # Install Jitsi
 apt install -y jitsi-meet &>> /debug.txt
 # letsencrypt
+export EMAIL=ramalingamvarkala@gmail.com
 echo $EMAIL | /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh &>> /debug.txt
+
+sed -i "s/hostname/$HOSTNAME/g" /home/ubuntu/wyse-meet/react/api/instances.json
+cd /home/ubuntu/wyse-meet/ && make
+
+sed  '14s/false/true/' /etc/prosody/conf.d/$HOSTNAME.cfg.lua
+
+sed -i 's+/usr/share/jitsi-meet+/home/ubuntu/wyse-meet+g' /etc/nginx/sites-available/$HOSTNAME.conf
+systemctl restart nginx.service prosody.service
