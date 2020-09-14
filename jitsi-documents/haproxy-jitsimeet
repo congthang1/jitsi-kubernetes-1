@@ -45,7 +45,10 @@ frontend haproxynode
     default_backend backendnodes
 
 backend backendnodes
-    balance url_param room
+#   balance url_param room
+    balance source
+    stick-table type string len 256 size 200k expire 120m
+    stick on url_param(room) table backendnodes
     hash-type consistent
     http-request set-header X-Forwarded-Port %[dst_port]
     http-request add-header X-Forwarded-Proto https if { ssl_fc }
