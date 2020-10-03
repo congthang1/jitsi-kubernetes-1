@@ -1,0 +1,42 @@
+Requirements:
+nodejs 14
+
+step-1:
+git clone https://github.com/excalidraw/excalidraw.git
+
+step-2:
+cd excalidraw/
+sudo npm install	
+
+step-3:
+npm run build
+
+step-4:
+mkdir /var/www/etherpad
+cp -rv build/* /var/www/etherpad/ 
+
+step-5: Copy files from this repo to apache2 and change domain name & ssl key location in those files
+cp etherpad.conf /etc/apache2/sites-available/
+cp etherpad-ssl.conf /etc/apache2/sites-enabled/
+a2ensite etherpad.conf
+
+step-6:
+vim /etc/jitsi/meet/youjitsi.wysemeet.cf-config.js
+---
+
+     nick
+     startBitrate
+     */
+
+    etherpad_base: 'https://etherpad.wysemeet.cf/',
+    // Allow all above example options to include a trailing comma and
+    // prevent fear when commenting out the last value.
+
+---
+
+systemctl restart apache2.service
+=================================================================
+step-7:
+we can use excalidraw in jitsimeet as well as separate site also
+1- In jitsimmet conference https://youjitsi.wysemeet.cf/ when we click on "Open shared document"
+2- https://etherpad.wysemeet.cf
