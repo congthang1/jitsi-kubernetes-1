@@ -1,0 +1,27 @@
+Etherpad:
+
+as ubuntu user
+curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+sudo apt install -y nodejs
+git clone --branch master https://github.com/ether/etherpad-lite.git && cd etherpad-lite && bin/run.sh
+
+vim /etc/apache2/sites-available/youjitsi.wysemeet.cf.conf
+----add 
+#-----------Etherpad
+  ProxyPreserveHost on
+  ProxyPass /etherpad http://localhost:9001
+  ProxyPassReverse /etherpad http://localhost:9001
+#----------
+----
+----
+vim /etc/jitsi/meet/youjitsi.wysemeet.cf-config.js 
+#line number 694
+
+     startBitrate
+     */
+
+    etherpad_base: 'https://youjitsi.wysemeet.cf/etherpad/p/',
+    // Allow all above example options to include a trailing comma and
+
+----
+systemctl restart apache2.service
