@@ -1,0 +1,25 @@
+TO REMOVE "send private message" IN JITSIMEET CONFERENCE:
+-----------------------------------------------
+vim /usr/share/jitsi-meet/css/all.css
+# go to the end of first line (by clicking $) and add this    [id*="privmsglink_"]{display:none}
+# it should look like 
+---
+bkit-transition:all .3s ease-out;transition:all .3s ease-out} [id*="privmsglink_"]{display:none}/*!
+--
+
+systemctl restart apache2.service
+
+reference:
+https://community.jitsi.org/t/disabling-private-messages/33202/6
+coding: https://community.jitsi.org/t/solved-disable-private-message-option/72872/2
+====================================================
+TO REMOVE "security options" BUTTON ON MAIN PAGE:
+-------------------------------------------------
+By removing "security options" button we can disable add a password for meeting
+
+vim /usr/share/jitsi-meet/interface_config.js
+# in TOOLBAR_BUTTONS remove 'security' 
+-----------------
+Restart apache2 to apply changes
+systemctl restart apache2.service
+
