@@ -23,3 +23,13 @@ vim /usr/share/jitsi-meet/interface_config.js
 Restart apache2 to apply changes
 systemctl restart apache2.service
 
+====================================================
+TO DISABLE "kick out" OPTION IN JITSIMEET CONFERENCE:
+----------------------------------------------------
+vim /usr/share/jitsi-meet/interface_config.js
+# add below line
+
+    // HIDE_KICK_BUTTON_FOR_GUESTS: false,
+    HIDE_KICK_BUTTON_FOR_GUESTS: true,
+------------
+systemctl restart apache2.service
