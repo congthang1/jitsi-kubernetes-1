@@ -26,6 +26,16 @@ systemctl restart apache2.service
 ====================================================
 TO DISABLE "kick out" OPTION IN JITSIMEET CONFERENCE:
 ----------------------------------------------------
+vim /etc/jitsi/meet/youjitsi.wysemeet.cf-config.js 
+---
+    // Options related to the remote participant menu.
+    remoteVideoMenu: {
+    //     // If set to true the 'Kick out' button will be disabled.
+     disableKick: true
+    },
+---
+systemctl restart apache2.service
+#############or############
 vim /usr/share/jitsi-meet/interface_config.js
 # add below line
 
