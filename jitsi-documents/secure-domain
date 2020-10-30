@@ -1,0 +1,40 @@
+Secure Domain:
+==============
+Host can only host the conference after doing login
+
+vim /etc/prosody/conf.avail/wysemeet.cf.cfg.lua
+
+change 
+
+authentication = "anonymous"
+
+To 
+
+authentication = "internal_plain"
+
+Then, in the same file, add the following section to the end of the file:
+
+...
+VirtualHost "guest.wysemeet.cf"
+    authentication = "anonymous"
+    c2s_require_encryption = false
+
+------------
+
+vim /etc/jitsi/meet/wysemeet.cf-config.js
+
+change 
+// anonymousdomain: 'guest.example.com',
+
+To
+anonymousdomain: 'guest.wysemeet.cf',
+
+-----------------
+vim /etc/jitsi/jicofo/sip-communicator.properties
+org.jitsi.jicofo.auth.URL=XMPP:wysemeet.cf
+
+
+prosodyctl register admin wysemeet.cf admin123
+
+
+systemctl restart nginx.service prosody.service jicofo.service jitsi-videobridge2.service

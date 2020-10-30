@@ -1,5 +1,13 @@
+TO START WITH AUDIO & VIDEO MUTED:
+----------------------------------
+startWithAudioMuted: true,
+startWithVideoMuted: true,
+
+systemctl restart apache2.service
+===================================
+
 TO REMOVE "send private message" IN JITSIMEET CONFERENCE:
------------------------------------------------
+---------------------------------------------------------
 vim /usr/share/jitsi-meet/css/all.css
 # go to the end of first line (by clicking $) and add this    [id*="privmsglink_"]{display:none}
 # it should look like 
@@ -12,7 +20,9 @@ systemctl restart apache2.service
 reference:
 https://community.jitsi.org/t/disabling-private-messages/33202/6
 coding: https://community.jitsi.org/t/solved-disable-private-message-option/72872/2
+
 ====================================================
+
 TO REMOVE "security options" BUTTON ON MAIN PAGE:
 -------------------------------------------------
 By removing "security options" button we can disable add a password for meeting
@@ -41,5 +51,35 @@ vim /usr/share/jitsi-meet/interface_config.js
 
     // HIDE_KICK_BUTTON_FOR_GUESTS: false,
     HIDE_KICK_BUTTON_FOR_GUESTS: true,
-------------
+
 systemctl restart apache2.service
+
+--------------------------------------------
+
+HOW TO CREATE & EDIT PROSODY USERS IN JITSIMEET:
+=========================================
+Ex: Domain name is jitsi.wysemeet.cf
+prosodyctl register admin jitsi.wysemeet.cf admin@123
+
+To get prosody users
+--------------------
+ls /var/lib/prosody/jitsi%2ewysemeet%2ecf
+root@jitsi:/var/lib/prosody/jitsi%2ewysemeet%2ecf/accounts# ls
+admin.dat  ramalingam.dat  user.dat
+--------
+
+root@jitsi:/var/lib/prosody/jitsi%2ewysemeet%2ecf/accounts# cat admin.dat 
+return {
+	["password"] = "admin@123";
+};
+-------------------
+
+
+
+
+
+Disable video and Audio before joining the conference:
+======================================================
+startWithAudioMuted: true,
+startWithVideoMuted: true,
+
